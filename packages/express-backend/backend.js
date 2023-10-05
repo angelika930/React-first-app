@@ -1,5 +1,22 @@
 import express from "express";
 
+const app = express();
+const port = 8000;
+
+app.use(express.json());
+
+
+app.get('/', (req, res) => {
+    res.send('Hello World!');
+});
+
+app.listen(port, () => {
+    console.log(`Example app listening at http://localhost:${port}`);
+});      
+app.get('/users', (req, res) => {
+    res.send(users);
+});
+
 const users = { 
     users_list : [
        { 
@@ -27,26 +44,26 @@ const users = {
           name: 'Dennis',
           job: 'Bartender',
        }
+    //    {
+    //     "id": "qwe123",
+    //     "job": "Zookeeper",
+    //     "name": "Cindy"
+    //  }
     ]
  }
  
- 
+ const addUser = (user) => {
+    users['users_list'].push(user);
+    return user;
+}
 
-const app = express();
-const port = 8000;
-
-app.use(express.json());
-app.get('/users', (req, res) => {
-    res.send(users);
+app.post('/users', (req, res) => {
+    const userToAdd = req.body;
+    addUser(userToAdd);
+    res.send();
 });
 
-app.get('/', (req, res) => {
-    res.send('Hello World!');
-});
 
-app.listen(port, () => {
-    console.log(`Example app listening at http://localhost:${port}`);
-});      
 
 const findUserByName = (name) => { 
    return users['users_list']
