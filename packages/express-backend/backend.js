@@ -45,12 +45,8 @@ const users = {
           id: 'zap555', 
           name: 'Dennis',
           job: 'Bartender',
-       }
-    //    {
-    //     "id": "qwe123",
-    //     "job": "Zookeeper",
-    //     "name": "Cindy"
-    //  }
+       },
+      
     ]
  }
  
@@ -62,7 +58,8 @@ const users = {
 app.post('/users', (req, res) => {
     const userToAdd = req.body;
     addUser(userToAdd);
-    res.send();
+    res.sendStatus(201);
+    //res.send();
 });
 
 
