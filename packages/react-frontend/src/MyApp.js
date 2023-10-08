@@ -31,7 +31,7 @@ function MyApp() {
 	function updateList(person) { 
 		postUser(person)
 		  .then((res) => {
-			
+			console.log(res);
 			if (res.status === 201) {
 				return res.json();
 			}

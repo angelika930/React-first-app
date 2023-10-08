@@ -54,12 +54,19 @@ const users = {
     users['users_list'].push(user);
     return user;
 }
+const addUserID = () => {
+    const id = Math.floor(100000 + Math.random() * 900000);
+    const newID = id.toString();
+    return newID;
+}
 
 app.post('/users', (req, res) => {
     const userToAdd = req.body;
+    userToAdd.id = addUserID();
+    //function call here to add id
     addUser(userToAdd);
+    console.log(userToAdd.id);
     res.sendStatus(201);
-    //res.send();
 });
 
 
