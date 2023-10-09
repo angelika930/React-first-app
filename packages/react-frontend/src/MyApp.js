@@ -36,13 +36,17 @@ function MyApp() {
 			console.log(error);
 		});
 	}
-	
-	
 
 	function fetchUsers() {
 		const promise = fetch("http://localhost:10000/users");
 		return promise;
 	}
+	useEffect(() => {
+		fetchUsers()
+			.then((res) => res.json())
+			.then((json) => setCharacters(json["users_list"]))
+			.catch((error) => { console.log(error); });
+	  }, [] );
 	function postUser(person) {
 		const promise = fetch("http://localhost:10000/users", {
 		  method: "POST",
@@ -52,13 +56,12 @@ function MyApp() {
 		  },
 		  body: JSON.stringify(person),
 		});
-		
 		return promise;
 	  }
 	function updateList(person) { 
 		postUser(person)
 			.then((res) => {
-				console.log(res);
+				console.log("hi", res);
 				return res.status === 201 ? res.json() : undefined
 		  	})
 			.then((json) => {if (json) setCharacters([...characters, person])})
@@ -66,12 +69,7 @@ function MyApp() {
 			console.log(error);
 		  	});
 	}
-	useEffect(() => {
-		fetchUsers()
-			.then((res) => res.json())
-			.then((json) => setCharacters(json["users_list"]))
-			.catch((error) => { console.log(error); });
-	  }, [] );
+	
   return (
     <div className = "container">
         <Table characterData={characters}

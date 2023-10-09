@@ -5,8 +5,6 @@ const app = express();
 const port = 10000;
 
 
-
-
 app.use(cors());
 app.use(express.json());
 
@@ -18,9 +16,7 @@ app.get('/', (req, res) => {
 app.listen(port, () => {
     console.log(`Example app listening at http://localhost:${port}`);
 });      
-app.get('/users', (req, res) => {
-    res.send(users);
-});
+
 
 const users = { 
     users_list : [
@@ -52,7 +48,9 @@ const users = {
       
     ]
  }
- 
+ app.get('/users', (req, res) => {
+    res.send(users);
+});
  const addUser = (user) => {
     users['users_list'].push(user);
     return user;
@@ -76,41 +74,20 @@ app.post('/users', (req, res) => {
     userToAdd.id = generateID();
     var result = addUser(userToAdd);
     console.log(result);
-    //console.log(userToAdd.id);
-    // for (var i = 0; i < users['users_list'].length; i++) {
-    //     console.log(users['users_list'][i].id);
-    // }
-    
     res.status(201).send(result);
+    
+    
+
 });
-
-
 
 const findUserByName = (name) => { 
    return users['users_list']
        .filter( (user) => user['name'] === name); 
 }
-const findUserByNameJob = (name,job) => {
-    return users['users_list']
-        .filter( (user) => user['job'] === job).filter((user) => user['name'] === name);
-}
-
-app.get('/users', (req, res) => {
-   const name = req.query.name;
-   if (name != undefined){
-       let result = findUserByName(name);
-       result = {users_list: result};
-       res.send(result);
-   }
-   else{
-       res.send(users);
-   }
-});
 app.get('/users', (req, res) => {
     const name = req.query.name;
-    const job = req.query.job;
-    if (job != undefined && name != undefined){
-        let result = findUserByNameJob(name,job);
+    if (name != undefined){
+        let result = findUserByName(name);
         result = {users_list: result};
         res.send(result);
     }
@@ -131,6 +108,25 @@ app.get('/users/:id', (req, res) => {
         res.send(result);
     }
 });
+const findUserByNameJob = (name,job) => {
+    return users['users_list']
+        .filter( (user) => user['job'] === job).filter((user) => user['name'] === name);
+}
+
+
+app.get('/users', (req, res) => {
+    const name = req.query.name;
+    const job = req.query.job;
+    if (job != undefined && name != undefined){
+        let result = findUserByNameJob(name,job);
+        result = {users_list: result};
+        res.send(result);
+    }
+    else{
+        res.send(users);
+    }
+ });
+
 
 const findUserIndex = (id) => {
     return users['users_list'].findIndex((user) => user['id'] === id);
