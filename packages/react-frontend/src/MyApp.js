@@ -5,8 +5,8 @@ import Form from './Form';
 
 function MyApp() {
 	const [characters, setCharacters] = useState([]);
-	function deleteUser() {
-		const promise = fetch("http://localhost:10000/users/:id", {
+	function deleteUser(id) {
+		const promise = fetch("http://localhost:10000/users", {
 			method: "DELETE",
 			headers: {
 			  "Content-Type": "application/json",
@@ -43,7 +43,12 @@ function MyApp() {
 	}
 	useEffect(() => {
 		fetchUsers()
-			.then((res) => res.json())
+		.then((res) => {
+			if (!res.ok) {
+			  throw new Error(`HTTP error! Status: ${res.status}`);
+			}
+			return res.json();
+		  })
 			.then((json) => setCharacters(json["users_list"]))
 			.catch((error) => { console.log(error); });
 	  }, [] );
@@ -61,10 +66,10 @@ function MyApp() {
 	function updateList(person) { 
 		postUser(person)
 			.then((res) => {
-				console.log("hi", res);
+				console.log(res);
 				return res.status === 201 ? res.json() : undefined
 		  	})
-			.then((json) => {if (json) setCharacters([...characters, person])})
+			.then((json) => {if (json) setCharacters([...characters, json])})
 		  	.catch((error) => {
 			console.log(error);
 		  	});
@@ -73,7 +78,8 @@ function MyApp() {
   return (
     <div className = "container">
         <Table characterData={characters}
-	  	removeCharacter={removeOneCharacter} />
+	  	removeCharacter={removeOneCharacter}
+		 />
 	<Form handleSubmit={updateList} />
     </div>
   );

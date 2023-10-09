@@ -74,10 +74,8 @@ app.post('/users', (req, res) => {
     userToAdd.id = generateID();
     var result = addUser(userToAdd);
     console.log(result);
-    res.status(201).send(result);
+    res.status(201).send(userToAdd);
     
-    
-
 });
 
 const findUserByName = (name) => { 
@@ -131,7 +129,7 @@ app.get('/users', (req, res) => {
 const findUserIndex = (id) => {
     return users['users_list'].findIndex((user) => user['id'] === id);
 }
-app.delete('/users/:id', (req, res) => {
+app.delete('/users', (req, res) => {
     const id = req.params['id'];
     const result = findUserIndex(id);
     let removed = users['users_list'].splice(result, 1);
