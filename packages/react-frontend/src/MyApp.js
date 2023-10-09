@@ -5,13 +5,40 @@ import Form from './Form';
 
 function MyApp() {
 	const [characters, setCharacters] = useState([]);
+	function deleteUser() {
+		const promise = fetch("http://localhost:10000/users/:id", {
+			method: "DELETE",
+			headers: {
+			  "Content-Type": "application/json",
+			  
+			},
+		  });
+		  
+		  return promise;
+
+
+	}
 	function removeOneCharacter (index) {
-		const updated = characters.filter((character,i) => {
-			return i !== index
+		deleteUser()
+		.then((res) => {
+			if (res.status === 204) {
+				const updated = characters.filter((character,i) => {
+					return i !== index
+				});
+				setCharacters(updated);
+			}
+			else {
+				console.error("Failed to user on the backend.");
+			}
+		
+		})
+		.catch((error) => {
+			console.log(error);
 		});
-		setCharacters(updated);
 	}
 	
+	
+
 	function fetchUsers() {
 		const promise = fetch("http://localhost:10000/users");
 		return promise;
@@ -25,19 +52,16 @@ function MyApp() {
 		  },
 		  body: JSON.stringify(person),
 		});
+		
 		return promise;
 	  }
 	function updateList(person) { 
 		postUser(person)
 			.then((res) => {
-				if (res.status === 201) {
-					return res.json();
-				}
-				else {
-					throw new Error("User not added");
-				}
+				console.log(res);
+				return res.status === 201 ? res.json() : undefined
 		  	})
-		  	.then(() => setCharacters([...characters, person]))
+			.then((json) => {if (json) setCharacters([...characters, person])})
 		  	.catch((error) => {
 			console.log(error);
 		  	});

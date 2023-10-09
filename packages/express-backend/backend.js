@@ -57,7 +57,7 @@ const users = {
     users['users_list'].push(user);
     return user;
 }
-const addUserID = () => {
+const generateID = () => {
     const id = Math.floor(100000 + Math.random() * 900000);
     const newID = id.toString();
     var count = 0;
@@ -73,13 +73,15 @@ const addUserID = () => {
 
 app.post('/users', (req, res) => {
     const userToAdd = req.body;
-    userToAdd.id = addUserID();
-    addUser(userToAdd);
+    userToAdd.id = generateID();
+    var result = addUser(userToAdd);
+    console.log(result);
     //console.log(userToAdd.id);
     // for (var i = 0; i < users['users_list'].length; i++) {
     //     console.log(users['users_list'][i].id);
     // }
-    res.sendStatus(300);
+    
+    res.status(201).send(result);
 });
 
 
@@ -141,7 +143,7 @@ app.delete('/users/:id', (req, res) => {
         res.status(404).send('Resource not found.');
     }
     else {
-        res.send();
+        res.status(204).send("User Deleted.");
     }
 });
 
