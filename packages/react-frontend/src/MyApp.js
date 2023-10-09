@@ -6,7 +6,7 @@ import Form from './Form';
 function MyApp() {
 	const [characters, setCharacters] = useState([]);
 	function deleteUser(id) {
-		const promise = fetch("http://localhost:10000/users", {
+		const promise = fetch("http://localhost:8000/users", {
 			method: "DELETE",
 			headers: {
 			  "Content-Type": "application/json",
@@ -38,7 +38,7 @@ function MyApp() {
 	}
 
 	function fetchUsers() {
-		const promise = fetch("http://localhost:10000/users");
+		const promise = fetch("http://localhost:8000/users");
 		return promise;
 	}
 	useEffect(() => {
@@ -53,7 +53,7 @@ function MyApp() {
 			.catch((error) => { console.log(error); });
 	  }, [] );
 	function postUser(person) {
-		const promise = fetch("http://localhost:10000/users", {
+		const promise = fetch("http://localhost:8000/users", {
 		  method: "POST",
 		  headers: {
 			"Content-Type": "application/json",
