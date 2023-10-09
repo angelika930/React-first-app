@@ -2,7 +2,10 @@ import express from "express";
 import cors from "cors";
 
 const app = express();
-const port = 8000;
+const port = 10000;
+
+
+
 
 app.use(cors());
 app.use(express.json());
@@ -57,16 +60,26 @@ const users = {
 const addUserID = () => {
     const id = Math.floor(100000 + Math.random() * 900000);
     const newID = id.toString();
+    var count = 0;
+    while (count < users['users_list'].length) {
+        if (users['users_list'][count].id === newID) {
+            newID = id.toString();
+            count = 0;
+        }
+        count++;
+    }
     return newID;
 }
 
 app.post('/users', (req, res) => {
     const userToAdd = req.body;
     userToAdd.id = addUserID();
-    //function call here to add id
     addUser(userToAdd);
-    console.log(userToAdd.id);
-    res.sendStatus(201);
+    //console.log(userToAdd.id);
+    // for (var i = 0; i < users['users_list'].length; i++) {
+    //     console.log(users['users_list'][i].id);
+    // }
+    res.sendStatus(300);
 });
 
 

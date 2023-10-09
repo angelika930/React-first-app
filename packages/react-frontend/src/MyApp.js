@@ -13,11 +13,11 @@ function MyApp() {
 	}
 	
 	function fetchUsers() {
-		const promise = fetch("http://localhost:8000/users");
+		const promise = fetch("http://localhost:10000/users");
 		return promise;
 	}
 	function postUser(person) {
-		const promise = fetch("http://localhost:8000/users", {
+		const promise = fetch("http://localhost:10000/users", {
 		  method: "POST",
 		  headers: {
 			"Content-Type": "application/json",
@@ -25,24 +25,22 @@ function MyApp() {
 		  },
 		  body: JSON.stringify(person),
 		});
-	
 		return promise;
 	  }
 	function updateList(person) { 
 		postUser(person)
-		  .then((res) => {
-			console.log(res);
-			if (res.status === 201) {
-				return res.json();
-			}
-			else {
-				throw new Error("User not added");
-			}
-		  })
-		  .then(() => setCharacters([...characters, person]))
-		  .catch((error) => {
+			.then((res) => {
+				if (res.status === 201) {
+					return res.json();
+				}
+				else {
+					throw new Error("User not added");
+				}
+		  	})
+		  	.then(() => setCharacters([...characters, person]))
+		  	.catch((error) => {
 			console.log(error);
-		  })
+		  	});
 	}
 	useEffect(() => {
 		fetchUsers()
