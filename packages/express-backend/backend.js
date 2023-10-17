@@ -1,5 +1,6 @@
 import express from "express";
 import cors from "cors";
+import userModel from "./user-services";
 
 const app = express();
 const port = 8000;
@@ -18,56 +19,72 @@ app.listen(port, () => {
 });      
 
 
-const users = { 
-    users_list : [
-       { 
-          id : 'xyz789',
-          name : 'Charlie',
-          job: 'Janitor',
-       },
-       {
-          id : 'abc123', 
-          name: 'Mac',
-          job: 'Bouncer',
-       },
-       {
-          id : 'ppp222', 
-          name: 'Mac',
-          job: 'Professor',
-       }, 
-       {
-          id: 'yat999', 
-          name: 'Dee',
-          job: 'Aspring actress',
-       },
-       {
-          id: 'zap555', 
-          name: 'Dennis',
-          job: 'Bartender',
-       },
+// const users = { 
+//     users_list : [
+//        { 
+//           id : 'xyz789',
+//           name : 'Charlie',
+//           job: 'Janitor',
+//        },
+//        {
+//           id : 'abc123', 
+//           name: 'Mac',
+//           job: 'Bouncer',
+//        },
+//        {
+//           id : 'ppp222', 
+//           name: 'Mac',
+//           job: 'Professor',
+//        }, 
+//        {
+//           id: 'yat999', 
+//           name: 'Dee',
+//           job: 'Aspring actress',
+//        },
+//        {
+//           id: 'zap555', 
+//           name: 'Dennis',
+//           job: 'Bartender',
+//        },
       
-    ]
- }
+//     ]
+//  }
  app.get('/users', (req, res) => {
     res.send(users);
 });
- const addUser = (user) => {
-    users['users_list'].push(user);
-    return user;
-}
-const generateID = () => {
-    const id = Math.floor(100000 + Math.random() * 900000);
-    const newID = id.toString();
-    var count = 0;
-    while (count < users['users_list'].length) {
-        if (users['users_list'][count].id === newID) {
-            newID = id.toString();
-            count = 0;
-        }
-        count++;
+//  const addUser = (user) => {
+//     users['users_list'].push(user);
+//     return user;
+// }
+function getUsers(name, job) {
+    let promise;
+    if (name === undefined && job === undefined) {
+      promise = userModel.find();
+    } else if (name && !job) {
+      promise = findUserByName(name);
+    } else if (job && !name) {
+      promise = findUserByJob(job);
     }
-    return newID;
+    return promise;
+  }
+function addUser(user) {
+    const userToAdd = new userModel(user);
+    const promise = userToAdd.save();
+    return promise;
 }
+// const generateID = () => {
+//     const id = Math.floor(100000 + Math.random() * 900000);
+//     const newID = id.toString();
+//     var count = 0;
+//     while (count < users['users_list'].length) {
+//         if (users['users_list'][count].id === newID) {
+//             newID = id.toString();
+//             count = 0;
+//         }
+//         count++;
+//     }
+//     return newID;
+// }
 
 app.post('/users', (req, res) => {
     const userToAdd = req.body;
@@ -78,10 +95,14 @@ app.post('/users', (req, res) => {
     
 });
 
-const findUserByName = (name) => { 
-   return users['users_list']
-       .filter( (user) => user['name'] === name); 
+// const findUserByName = (name) => { 
+//    return users['users_list']
+//        .filter( (user) => user['name'] === name); 
+// }
+function findUserByName(name) {
+    return userModel.find({ name: name });
 }
+  
 app.get('/users', (req, res) => {
     const name = req.query.name;
     if (name != undefined){
@@ -93,9 +114,10 @@ app.get('/users', (req, res) => {
         res.send(users);
     }
  });
-const findUserById = (id) =>
-    users['users_list']
-        .find( (user) => user['id'] === id);
+// Newly added
+function findUserById(id) {
+    return userModel.findById(id);
+}
     
 app.get('/users/:id', (req, res) => {
     const id = req.params['id']; //or req.params.id
@@ -106,11 +128,15 @@ app.get('/users/:id', (req, res) => {
         res.send(result);
     }
 });
-const findUserByNameJob = (name,job) => {
-    return users['users_list']
-        .filter( (user) => user['job'] === job).filter((user) => user['name'] === name);
-}
+// const findUserByNameJob = (name,job) => {
+//     return users['users_list']
+//         .filter( (user) => user['job'] === job).filter((user) => user['name'] === name);
+// }
 
+//Newly added
+function findUserByJob(job) {
+    return userModel.find({ job: job });
+}
 
 app.get('/users', (req, res) => {
     const name = req.query.name;
@@ -126,9 +152,9 @@ app.get('/users', (req, res) => {
  });
 
 
-const findUserIndex = (id) => {
-    return users['users_list'].findIndex((user) => user['id'] === id);
-}
+// const findUserIndex = (id) => {
+//     return users['users_list'].findIndex((user) => user['id'] === id);
+// }
 app.delete('/users', (req, res) => {
     const id = req.params['id'];
     const result = findUserIndex(id);
