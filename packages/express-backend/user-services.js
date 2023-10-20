@@ -19,6 +19,7 @@ function getUsers(name, job) {
   } else if (job && !name) {
     promise = findUserByJob(job);
   }
+  console.log(promise)
   return promise;
 }
 

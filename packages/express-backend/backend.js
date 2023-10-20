@@ -20,6 +20,65 @@ app.listen(port, () => {
     console.log(`Example app listening at http://localhost:${port}`);
 });      
 
+app.get('/users', (req, res) => {
+    userModel.getUsers(req.query.name,req.query.job)
+        .then((result) => {
+            res.send({users_list: result});
+        })
+    
+});
+// app.get('/users', (req, res) => {
+//     const name = req.query.name;
+//     userModel.findUserByName(name)
+//         .then((result) => {
+//             if (result !== undefined) {
+//                 result = {users_list: result};
+//                 res.send(result);
+//             }
+//         })
+//         .catch((error) => {
+//             res.status(404).send(error);
+//         })
+//         .catch((error) => {
+//             console.error(error);
+//             res.status(500).send(error);
+//         });
+//  });
+ app.get('/users', (req, res) => {
+    const name = req.query.name;
+    const job = req.query.job;
+    userModel.findUserByNameJob(name,job)
+        .then ((result) => {
+            if (job != undefined && name != undefined){
+                result = {users_list: result};
+                res.send(result);
+            }
+        })
+        .catch((error) => {
+            res.status(404).send(error)
+        })
+
+ });
+
+    
+app.get('/users/:id', (req, res) => {
+    const id = req.params['id']; //or req.params.id
+    userModel.findUserById(id)
+        .then ((result) => {
+            if (result !== undefined) {
+                res.send(result);
+            }
+        })
+        .catch((error) => {
+            res.status(404).send(error);
+        })
+});
+// const findUserByNameJob = (name,job) => {
+//     return users['users_list']
+//         .filter( (user) => user['job'] === job).filter((user) => user['name'] === name);
+// }
+
+
 
 // const users = { 
 //     users_list : [
@@ -51,13 +110,7 @@ app.listen(port, () => {
       
 //     ]
 //  }
-app.get('/users', (req, res) => {
-    userModel.getUsers(req.query.name,req.query.job)
-        .then((result) => {
-            res.send({users_list: result});
-        })
-    
-});
+
 // app.get('/users', (req,res) =>{
 //     const name = req.query.name;
 //     const job = req.query.job;
@@ -75,40 +128,22 @@ app.get('/users', (req, res) => {
 //     users['users_list'].push(user);
 //     return user;
 // }
-function getUsers(name, job) {
-    let promise;
-    if (name === undefined && job === undefined) {
-        promise = userModel.find();
-    }
-    else if (name && !job) {
-        promise = userModel.find({ name: name });
-    } else if (job && !name) {
-        promise = userModel.find({ job: job });
-    }
-    return promise;
-}
+
 // function addUser(user) {
 //   const userToAdd = new userModel(user);
 //   const promise = userToAdd.save();
 //   return promise;
 // }
-// const generateID = () => {
-//     const id = Math.floor(100000 + Math.random() * 900000);
-//     const newID = id.toString();
-//     var count = 0;
-//     while (count < users['users_list'].length) {
-//         if (users['users_list'][count].id === newID) {
-//             newID = id.toString();
-//             count = 0;
-//         }
-//         count++;
-//     }
-//     return newID;
-// }
+const generateID = () => {
+    const id = Math.floor(100000 + Math.random() * 900000);
+    const newID = id.toString();
+    return newID;
+}
 
 app.post('/users', (req, res) => {
     const userToAdd = req.body;
-    //userToAdd.id = generateID();
+    userToAdd.id = generateID();
+    console.log(userToAdd.id)
     userModel.addUser(userToAdd)
        .then((result) => {
         console.log(result);
@@ -126,66 +161,8 @@ app.post('/users', (req, res) => {
 //    return users['users_list']
 //        .filter( (user) => user['name'] === name); 
 // }
-function findUserByName(name) {
-    return userModel.find({ name: name });
-}
+
   
-app.get('/users', (req, res) => {
-    const name = req.query.name;
-    userModel.findUserByName(name)
-        .then((result) => {
-            if (result !== undefined) {
-                result = {users_list: result};
-                res.send(result);
-            }
-        })
-        .catch((error) => {
-            res.status(404).send(error);
-        })
-        .catch((error) => {
-            console.error(error);
-            res.status(500).send(error);
-        });
- });
-
-    
-app.get('/users/:id', (req, res) => {
-    const id = req.params['id']; //or req.params.id
-    userModel.findUserById(id)
-        .then ((result) => {
-            if (result !== undefined) {
-                res.send(result);
-            }
-        })
-        .catch((error) => {
-            res.status(404).send(error);
-        })
-});
-// const findUserByNameJob = (name,job) => {
-//     return users['users_list']
-//         .filter( (user) => user['job'] === job).filter((user) => user['name'] === name);
-// }
-
-//Newly added
-function findUserByJob(job) {
-    return userModel.find({ job: job });
-}
-
-app.get('/users', (req, res) => {
-    const name = req.query.name;
-    const job = req.query.job;
-    userModel.findUserByNameJob(name,job)
-        .then ((result) => {
-            if (job != undefined && name != undefined){
-                result = {users_list: result};
-                res.send(result);
-            }
-        })
-        .catch((error) => {
-            res.status(404).send(error)
-        })
-
- });
 
 
 
